@@ -36,7 +36,7 @@ const OtpForgotPassword = () => {
 
       if (data.success) {
         toast.success("OTP verified successfully!");
-        localStorage.removeItem("authUserId"); // Clear it after success
+        
         setTimeout(() => {
           navigate("/updatePassword");
         }, 1000);
