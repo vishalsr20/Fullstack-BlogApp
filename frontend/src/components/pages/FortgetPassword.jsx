@@ -17,9 +17,11 @@ import 'react-toastify/dist/ReactToastify.css';
     try {
       const { data } = await axios.post(forgotPassword, { email });
       if (data.success === true) {
+        console.log("API response:", data);
         toast.success("OTP SENT. Check your email.");
-        localStorage.setItem("authEmail", data.user.email);
         localStorage.setItem("authUserId", data.user._id);
+        
+console.log("Saved userId:", localStorage.getItem("authUserId")); 
         navigate("/verifyotpforgotpassword");
       } else {
         toast.error(data.message || "User not registered.");
