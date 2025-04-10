@@ -1,202 +1,144 @@
-import { useEffect, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { getContentType, LikeRoutes } from "../../APIRoutes";
-import axios from "axios";
-import { FaHeart } from "react-icons/fa";
-import { CiHeart } from "react-icons/ci";
-import {toast,ToastContainer} from "react-toastify"
-import 'react-toastify/dist/ReactToastify.css';
-const SearchResult = () => {
-  const [searchParams] = useSearchParams();
-  const [blogType, setBlogType] = useState([]);
-  const category = searchParams.get("category");
-  const [token , setToken] = useState(null)
-  const [userId , setUserId] = useState(null)
+import { Link, useNavigate } from "react-router-dom";
+import logo from "../assets/techthinker.webp";
+import { useState } from "react";
+import { FcSearch } from "react-icons/fc";
+import { ToastContainer, toast } from "react-toastify";
+import { FiMenu, FiX } from "react-icons/fi";
 
+const Searchfilter = ({ isLoggedIn, setIsLoggedIn }) => {
+  const [search, setSearch] = useState("");
+  const [showDropdown, setShowDropdown] = useState(true);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
-  const navigate = useNavigate()
-  useEffect( () => {
-    const tokenSession = localStorage.getItem("authToken")
-    if(tokenSession){
-        setToken(tokenSession)
-    }
-    try{
-        const decodeToken = JSON.parse(atob(tokenSession.split('.')[1]));
+  const categories = ["Technology", "Health", "Education", "Fun"];
 
-        setUserId(decodeToken.div)
+  const filteredCategories = categories.filter((cat) =>
+    cat.toLowerCase().includes(search.toLowerCase())
+  );
 
-    }catch(error){
-        console.log("Error in the search result ", error.message)
-        toast.error("Please login");
-        navigate("/login")
-    }
-  },[])
-  useEffect(() => {
-    if (category) {
-      fetchData(category);
-    }
-  }, [category]);
+  const handleSelect = (category) => {
+    setSearch(category);
+    setShowDropdown(false);
+    navigate(`/search?category=${category.toLowerCase()}`);
+    setIsMenuOpen(false);
+  };
 
-
-
-  const fetchData = async (category) => {
-    try {
-      const res = await axios.get(getContentType(category));
-      setBlogType(res.data.blog || []);
-      console.log("fetch from res:", res.data);
-    } catch (error) {
-      console.error("Error fetching filtered blogs:", error);
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (search.trim()) {
+      navigate(`/blogs?category=${search.toLowerCase()}`);
+      setIsMenuOpen(false);
     }
   };
 
-  const toggleLike = async (e,blogId) => {
+  const handleCreateBlogClick = (e) => {
     e.preventDefault();
-    if(!token){
-        toast.error("Please login to like the blog")
-        navigate("/login")
-        return
+    if (!isLoggedIn) {
+      toast.error("Please login to create blog");
+      navigate("/login");
+    } else {
+      navigate("/createblog");
     }
-    try{
-        setBlogType(prevBlogs => 
-            prevBlogs.map(blog => {
-                if(blog._id == blogId){
-                const isLiked = blog.likes.includes(userId);
-                return{
-                    ...blog,
-                    likes:isLiked
-                    ? blog.likes.filter(id => id !== userId)
-                    : [...blog.likes, userId],
-                    like:isLiked ? blog.like -1 : blog.like+ 1
-                }
-            }
-            return blog
-            })
-        )
-
-        await axios.put(
-            `${LikeRoutes}/${blogId}`,
-            {},
-            { headers: { Authorization: `Bearer ${token}` } }
-        )
-    }
-
-  catch(error) {
-    toast.error("Token expires please login ");
-    navigate("/login")
-    console.log("Error while liking the post",error.messagae)
-    
-    setBlogType(prevBlogs =>
-      prevBlogs.map(blog => {
-        if (blog._id === blogId) {
-          const isLiked = !blog.likes.includes(userId);
-          return {
-            ...blog,
-            likes:isLiked
-              ? blog.likes.filter(id => id != userId)
-              : [...blog.likes, userId],
-            like: isLiked ? blog.like - 1 : blog.like + 1
-          };
-        }
-        return blog;
-      })
-    );
-  }
-}
-
-const Category = (blog) => {
-    navigate(`/blog/${blog}`, { state: { blog } });
-
-  }
-  const hasUserLiked = (blog) => {
-    return userId && blog.likes.includes(userId);
+    setIsMenuOpen(false);
   };
 
   return (
-    <div className="bg-gray-100 min-h-screen py-10 px-4 flex flex-col items-center">
-      <div className="w-[90%] max-w-6xl">
-        <h2 className="text-4xl font-bold text-center text-gray-800 mb-10">
-          Showing results for: <span className="text-blue-600">{category}</span>
-        </h2>
+    <div className="bg-teal-100 shadow-lg font-serif text-black w-full fixed top-0 left-0 z-50">
+      <nav className="px-4 py-3 mx-auto flex items-center justify-evenly flex-wrap">
+        {/* Logo */}
+        <div className="flex items-center gap-2">
+          <Link to="/" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-2">
+            <img src={logo} alt="TECH-THINKERS" className="rounded-2xl" width={55} height={55} />
+            <h2 className="text-lg font-bold">BLOGS</h2>
+          </Link>
+        </div>
 
-        {blogType.length > 0 ? (
-          <div className="flex flex-col space-y-8">
-            {blogType.map((blog) => (
-              <div
-                key={blog._id}
-                className="flex flex-col lg:flex-row bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300"
-                
-              >
-                <div className="flex-1 flex flex-col justify-between">
-                  <div>
-                    <div className="flex items-center gap-4 mb-4">
-                      <img
-                        src={blog.avatar || "/default-avatar.png"}
-                        alt="User"
-                        width={50}
-                        height={50}
-                        className="rounded-xl object-cover"
-                        onError={(e) => {
-                          e.target.src = "/default-avatar.png";
-                        }}
-                      />
-                      <h3 className="text-lg font-bold text-gray-700">
-                        @{blog.username}
-                      </h3>
-                    </div>
-                    <h4 className="text-2xl font-semibold text-gray-800 mb-3"
-                    onClick={() => Category(blog._id)}>
-                      {blog.title}
-                    </h4>
-                    <p className="text-gray-600 text-base mb-4 line-clamp-3"
-                    onClick={() => Category(blog)}>
-                      {blog.content}
-                    </p>
-                  </div>
+        {/* Hamburger Icon */}
+        <div className="md:hidden">
+          <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="text-2xl">
+            {isMenuOpen ? <FiX /> : <FiMenu />}
+          </button>
+        </div>
 
-                  <div className="flex justify-between items-center">
-                        <div className="flex items-center">
-                            <button
-                            onClick={(e) => toggleLike(e,blog._id)}
-                            className="focus:outline-none hover:scale-110 transition-transform"
-                            aria-label={hasUserLiked(blog) ? "Unlike" : "Like"}
-                            >
-                           {hasUserLiked(blog) ? (
-                                                     <FaHeart className="text-red-500 mr-2 text-2xl" />
-                                                   ) : (
-                                                     <CiHeart className="text-gray-400 mr-2 hover:text-red-500 text-2xl" />
-                                                   )}
-
-                            </button>
-                            <span className="text-lg font-medium">{blog.likes?.length || 0}</span>
-                            <p className="text-base text-gray-500 ">{new Date(blog.createdAt).toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'})}</p>
-                        </div>
-                  </div>
-
-
-                 
-                </div>
-                {blog.image && (
-                  <div className="w-full lg:w-1/3 flex justify-end mt-4 lg:mt-0">
-                    <img
-                      src={blog.image || "/default-blog-image.jpg"}
-                      alt={blog.title}
-                      className="rounded-xl object-cover w-full lg:w-[300px] h-[200px]"
-                      onError={(e) => {
-                        e.target.src = "/default-blog-image.jpg";
-                      }}
-                    />
-                  </div>
-                )}
-              </div>
-            ))}
+        {/* Navigation Links */}
+        <div
+          className={`${
+            isMenuOpen ? "block" : "hidden"
+          } w-full md:flex md:items-center md:w-auto mt-3 md:mt-0 space-y-3 md:space-y-0 md:space-x-6`}
+        >
+          <div className="flex flex-col md:flex-row gap-4 md:items-center">
+            <Link to="/" onClick={() => setIsMenuOpen(false)}>Home</Link>
+            <button onClick={handleCreateBlogClick} className="text-left">
+              CreateBlog
+            </button>
           </div>
-        ) : (
-          <p className="text-center text-xl text-gray-600">No Blogs found</p>
-        )}
-      </div>
-      <ToastContainer/>
+
+          {/* Search Bar */}
+          <form
+            onSubmit={handleSubmit}
+            className="relative w-full max-w-xs mx-auto md:mx-0"
+            autoComplete="off"
+          >
+            <FcSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-xl pointer-events-none" />
+            <input
+              type="text"
+              placeholder="Search..."
+              
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setShowDropdown(true);
+              }}
+              className="w-full pl-10 pr-4 py-2 bg-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-blue-400"
+            />
+            {showDropdown && search && (
+              <ul className="absolute z-50 mt-1 w-full bg-white border border-gray-300 rounded shadow-md">
+                {filteredCategories.length > 0 ? (
+                  filteredCategories.map((category) => (
+                    <li
+                      key={category}
+                      onClick={() => handleSelect(category)}
+                      className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                    >
+                      {category}
+                    </li>
+                  ))
+                ) : (
+                  <li className="px-4 py-2 text-gray-500">No category found</li>
+                )}
+              </ul>
+            )}
+          </form>
+
+          {/* Auth Links */}
+          <div className="flex flex-col md:flex-row gap-4 mt-4 md:mt-0 md:items-center">
+            {isLoggedIn ? (
+              <>
+                <Link to="/profile" onClick={() => setIsMenuOpen(false)}>Profile</Link>
+                <Link
+                  to="/"
+                  onClick={() => {
+                    setIsLoggedIn(false);
+                    localStorage.removeItem("authToken");
+                    setIsMenuOpen(false);
+                  }}
+                >
+                  Logout
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link to="/login" onClick={() => setIsMenuOpen(false)}>Login</Link>
+                <Link to="/signup" onClick={() => setIsMenuOpen(false)}>Signup</Link>
+              </>
+            )}
+          </div>
+        </div>
+      </nav>
+      <ToastContainer />
     </div>
   );
 };
 
-export default SearchResult;
+export default Searchfilter;
