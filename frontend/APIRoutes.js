@@ -1,4 +1,4 @@
-const host = 'https://techthinkers.onrender.com/'
+const host = 'https://techthinkers.onrender.com'
 
 export const LoginRoutes = `${host}/api/v1/login`
 export const SignUpRoutes = `${host}/api/v1/signup`
