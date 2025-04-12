@@ -36,7 +36,7 @@ const BlogDetails = () => {
     : "Unknown date";
 
   return (
-    <div className="px-4 mt-5 mb-10 font-serif  py-8 focus:outline  shadow-md  shadow-teal-500 max-w-4xl mx-auto">
+    <div className="px-4 mt-20 mb-10 font-serif  py-8 focus:outline  shadow-md  shadow-teal-500 max-w-4xl mx-auto">
       <ToastContainer />
 
       {/* Go back button */}
