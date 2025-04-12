@@ -44,7 +44,8 @@ const Searchfilter = ({ isLoggedIn, setIsLoggedIn }) => {
   };
 
   return (
-    <div className="bg-teal-100 shadow-lg font-serif text-black w-full fixed top-0 left-0 z-50">
+    <div className="bg-teal-100 mt-20
+     shadow-lg font-serif text-black w-full fixed top-0 left-0 z-50">
       <nav className="px-4 py-3 mx-auto flex items-center justify-evenly flex-wrap">
         {/* Logo */}
         <div className="flex items-center gap-2">
