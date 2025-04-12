@@ -104,7 +104,7 @@ const SearchResult = () => {
   };
 
   return (
-    <div className="bg-gray-100 min-h-screen py-10 px-4 flex flex-col items-center">
+    <div className="bg-gray-100 mt-20 min-h-screen py-10 px-4 flex flex-col items-center">
       <div className="w-[90%] max-w-6xl">
         <h2 className="text-4xl font-bold text-center text-gray-800 mb-10">
           Showing results for: <span className="text-blue-600">{category}</span>
