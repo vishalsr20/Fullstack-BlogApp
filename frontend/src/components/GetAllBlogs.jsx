@@ -118,7 +118,7 @@ const GetAllBlogs = () => {
  
 
   return (
-    <div className="bg-gray-100 font-serif flex flex-col items-center w-full min-h-screen py-8 px-4">
+    <div className="bg-gray-100 font-serif flex flex-col mt-20  items-center w-full min-h-screen py-8 px-4">
       <div className="w-[90%] max-w-6xl">
         <h2 className="text-4xl font-bold text-center text-gray-800 mb-10">All Blogs</h2>
         
