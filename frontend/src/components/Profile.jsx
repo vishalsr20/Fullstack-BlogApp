@@ -72,7 +72,7 @@ const Profile = () => {
   };
 
   return (
-    <div className="bg-gray-100 min-h-screen py-6 px-4 flex flex-col items-center">
+    <div className="bg-gray-100 mt-20 min-h-screen py-6 px-4 flex flex-col items-center">
       <div className="w-full max-w-6xl flex flex-col lg:flex-row gap-6">
         {/* Profile Section */}
         <div className="w-full lg:w-1/3 bg-white rounded-lg shadow-md p-6">
