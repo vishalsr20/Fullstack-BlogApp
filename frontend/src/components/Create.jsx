@@ -61,7 +61,10 @@ const Create = () => {
       );
 
       if (data.success) {
+       
+        
         toast.success("Blog created successfully");
+        
         navigate('/');
       } else {
         toast.error(data.message || "Failed to create the blog");
@@ -73,7 +76,7 @@ const Create = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-5">
+    <div className="min-h-screen mt-20 bg-gray-100 flex items-center justify-center p-5">
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-lg">
         <h2 className="text-2xl font-bold mb-4 text-gray-800">Create a New Blog</h2>
         <form onSubmit={CreateHandler}>

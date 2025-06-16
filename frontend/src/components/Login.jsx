@@ -71,7 +71,7 @@ const Login = () => {
   };
 
   return (
-    <div className="flex flex-col shadow-md shadow-teal-200 mx-auto lg:flex-row justify-center items-center max-w-4xl mt-14 border rounded-lg overflow-hidden">
+    <div className="flex mt-20 flex-col shadow-md shadow-teal-200 mx-auto lg:flex-row justify-center items-center max-w-4xl  border rounded-lg overflow-hidden">
       {/* Left Image Section */}
       <div className="hidden lg:block lg:w-1/2">
         <img

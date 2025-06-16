@@ -14,9 +14,9 @@ export const UpdatePassword = () => {
     
     e.preventDefault();
     const email = localStorage.getItem("authEmail")
-    const userId = localStorage.getItem("userId")
-    // console.log("email",email);
-    // console.log("userId",userId)
+    const userId = localStorage.getItem("authUserId")
+    console.log("email",email);
+    console.log("userId",userId)
     if (password !== confirmPassword) {
       setError("Passwords do not match");
       setSuccess('');
@@ -28,7 +28,7 @@ export const UpdatePassword = () => {
         if (data.success === true) {
           toast.success("Password updated successfully");
           localStorage.removeItem("authEmail");
-          localStorage.removeItem("userId");
+          
           navigate("/login");
         } else {
           toast.error(data.message || "Password update failed");

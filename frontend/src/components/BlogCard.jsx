@@ -2,7 +2,7 @@ const BlogCard = ({ blog, toggleLike, hasUserLiked, onClickCard }) => {
     return (
       <div
         onClick={() => onClickCard(blog)}
-        className="flex flex-col lg:flex-row w-full bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300"
+        className="flex flex-col mt-20 lg:flex-row w-full bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300"
       >
         {/* Left content */}
         <div className="flex-1 flex flex-col justify-between">
