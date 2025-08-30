@@ -36,31 +36,32 @@ const BlogDetails = () => {
     : "Unknown date";
 
   return (
-    <div className="px-4 mt-20 mb-10 font-serif  py-8 focus:outline  shadow-md  shadow-teal-500 max-w-4xl mx-auto">
+   <div>
+     <div className="px-4 w-[90%] mt-24 mb-10 font-serif p-8 rounded-xl   py-8 focus:outline  shadow-md  shadow-black max-w-4xl mx-auto">
       <ToastContainer />
 
       {/* Go back button */}
       <button
         onClick={() => navigate(-1)}
-        className="mb-6 text-blue-600 hover:underline"
+        className="mb-6 text-gray-600 hover:underline"
       >
         ← Back to blogs
       </button>
 
       {/* Blog Title */}
-      <h1 className="text-4xl font-bold mb-2 font-serif text-gray-900">{blog.title}</h1>
+      <h1 className="text-xl font-semibold mb-2 font-serif text-gray-700">{blog.title}</h1>
 
       {/* Created Date */}
-      <p className="text-sm text-gray-500 mb-6">Posted on {formattedDate}</p>
+      <p className="text-xs text-gray-500 mb-6">Posted on {formattedDate}</p>
 
       {/* Author section */}
       <div className="flex items-center mb-6">
         <img
           src={blog.avatar || "/default-avatar.png"}
           alt="User"
-          className="w-12 h-12 rounded-full object-cover"
+          className="w-10 h-10 rounded-full object-cover"
         />
-        <p className="ml-4 text-lg font-serif text-gray-700">
+        <p className="ml-4 text-sm font-serif text-gray-700">
           @{blog.username || "anonymous"}
         </p>
       </div>
@@ -70,7 +71,7 @@ const BlogDetails = () => {
         <img
           src={blog.image}
           alt={blog.title}
-          className="w-full h-[400px] object-cover rounded-xl mb-6"
+          className="w-full h-[300px] object-cover rounded-xl mb-6"
         />
       )}
 
@@ -89,10 +90,11 @@ const BlogDetails = () => {
       )}
 
       {/* Content */}
-      <p className="text-lg font-serif text-gray-800 whitespace-pre-line leading-relaxed">
+      <p className="text-sm font-serif flex justify-start text-gray-600 whitespace-pre-line leading-relaxed">
         {blog.content}
       </p>
     </div>
+   </div>
   );
 };
 
