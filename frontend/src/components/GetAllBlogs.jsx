@@ -146,18 +146,18 @@ const GetAllBlogs = () => {
                 >
                   <div className="flex-1 flex flex-col justify-between">
                     <div>
-                      <div className="flex items-center gap-4 mb-4">
+                      <div className="flex items-center gap-2 mb-4">
                         <img
                           src={blog.avatar || '/default-avatar.png'}
                           alt="User"
-                          width={50}
-                          height={50}
+                          width={30}
+                          height={30}
                           className="rounded-xl object-cover"
                           onError={(e) => { e.target.src = '/default-avatar.png'; }}
                         />
-                        <h3 className="text-lg font-bold text-gray-700">@{blog.username}</h3>
+                        <h3 className="text-sm font-bold text-gray-900">@{blog.username}</h3>
                       </div>
-                      <h4 className="text-2xl font-semibold text-gray-800 mb-3">{blog.title}</h4>
+                      <h4 className="text-lg font-semibold text-gray-600 mb-3">{blog.title}</h4>
                       <p className="text-gray-600 text-base mb-4 line-clamp-3">{blog.content}</p>
                     </div>
 
@@ -179,7 +179,7 @@ const GetAllBlogs = () => {
 
                       <div>
                         <button
-                          className="font-bold text-gray-600 font-serif text-sm"
+                          className="font-bold text-gray-600 whitespace-nowrap  font-serif "
                           onClick={(e) => commentsHandler(e, blog._id)}
                         >
                           💬 Comment
