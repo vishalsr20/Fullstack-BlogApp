@@ -1,15 +1,16 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
+import { useState, useEffect, useRef } from "react";
 import logo from "../assets/techthinker.webp";
-import { useState } from "react";
 import { FcSearch } from "react-icons/fc";
 import { ToastContainer, toast } from "react-toastify";
 import { FiMenu, FiX } from "react-icons/fi";
 
 const Searchfilter = ({ isLoggedIn, setIsLoggedIn }) => {
   const [search, setSearch] = useState("");
-  const [showDropdown, setShowDropdown] = useState(true);
+  const [showDropdown, setShowDropdown] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const dropdownRef = useRef(null);
 
   const categories = ["Technology", "Health", "Education", "Fun"];
 
@@ -29,11 +30,11 @@ const Searchfilter = ({ isLoggedIn, setIsLoggedIn }) => {
     if (search.trim()) {
       navigate(`/blogs?category=${search.toLowerCase()}`);
       setIsMenuOpen(false);
+      setShowDropdown(false);
     }
   };
 
-  const handleCreateBlogClick = (e) => {
-    e.preventDefault();
+  const handleCreateBlogClick = () => {
     if (!isLoggedIn) {
       toast.error("Please login to create blog");
       navigate("/login");
@@ -43,49 +44,64 @@ const Searchfilter = ({ isLoggedIn, setIsLoggedIn }) => {
     setIsMenuOpen(false);
   };
 
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handler = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setShowDropdown(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
   return (
-    <div className="bg-teal-100 
-     shadow-lg font-serif text-black w-full fixed top-0 left-0 z-50">
-      <nav className="px-4 py-3 mx-auto flex items-center justify-evenly flex-wrap">
+    <div className="bg-teal-100 shadow-lg font-serif text-black w-full fixed top-0 left-0 z-50">
+      <nav className="px-4 py-3 flex items-center justify-between">
         {/* Logo */}
-        <div className="flex items-center gap-2">
-          <Link to="/" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-2">
-            <img src={logo} alt="TECH-THINKERS" className="rounded-2xl" width={55} height={55} />
-            <h2 className="text-lg font-bold">BLOGS</h2>
-          </Link>
-        </div>
+        <Link to="/" className="flex items-center gap-2" onClick={() => setIsMenuOpen(false)}>
+          <img src={logo} alt="TECH-THINKERS" className="rounded-2xl" width={50} height={50} />
+          <h2 className="text-xl font-bold">BLOGS</h2>
+        </Link>
 
-        {/* Hamburger Icon */}
-        <div className="md:hidden">
-          <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="text-2xl">
-            {isMenuOpen ? <FiX /> : <FiMenu />}
-          </button>
-        </div>
+        {/* Hamburger Icon (Mobile) */}
+        <button
+          className="md:hidden text-2xl"
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+        >
+          {isMenuOpen ? <FiX /> : <FiMenu />}
+        </button>
 
-        {/* Navigation Links */}
+        {/* Nav Links */}
         <div
           className={`${
             isMenuOpen ? "block" : "hidden"
-          } w-full md:flex md:items-center md:w-auto mt-3 md:mt-0 space-y-3 md:space-y-0 md:space-x-6`}
+          } absolute md:static top-16 left-0 w-full md:w-auto bg-teal-100 md:bg-transparent p-4 md:p-0 shadow-md md:shadow-none md:flex md:items-center md:space-x-6`}
         >
-          <div className="flex flex-col md:flex-row gap-4 md:items-center">
-            <Link to="/" onClick={() => setIsMenuOpen(false)}>Home</Link>
-            <button onClick={handleCreateBlogClick} className="text-left">
-              CreateBlog
+          <div className="flex flex-col md:flex-row gap-4">
+            <NavLink
+              to="/"
+              onClick={() => setIsMenuOpen(false)}
+              className={({ isActive }) => (isActive ? "font-bold text-teal-700" : "")}
+            >
+              Home
+            </NavLink>
+            <button onClick={handleCreateBlogClick} className="text-left hover:text-teal-700">
+              Create Blog
             </button>
           </div>
 
           {/* Search Bar */}
           <form
             onSubmit={handleSubmit}
-            className="relative w-full max-w-xs mx-auto md:mx-0"
+            className="relative w-full md:w-64 mt-3 md:mt-0"
             autoComplete="off"
+            ref={dropdownRef}
           >
             <FcSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-xl pointer-events-none" />
             <input
               type="text"
               placeholder="Search..."
-              
               value={search}
               onChange={(e) => {
                 setSearch(e.target.value);
@@ -113,25 +129,44 @@ const Searchfilter = ({ isLoggedIn, setIsLoggedIn }) => {
           </form>
 
           {/* Auth Links */}
-          <div className="flex flex-col md:flex-row gap-4 mt-4 md:mt-0 md:items-center">
+          <div className="flex flex-col md:flex-row gap-4 mt-4 md:mt-0">
             {isLoggedIn ? (
               <>
-                <Link to="/profile" onClick={() => setIsMenuOpen(false)}>Profile</Link>
-                <Link
-                  to="/"
+                <NavLink
+                  to="/profile"
+                  onClick={() => setIsMenuOpen(false)}
+                  className={({ isActive }) => (isActive ? "font-bold text-teal-700" : "")}
+                >
+                  Profile
+                </NavLink>
+                <button
                   onClick={() => {
                     setIsLoggedIn(false);
                     localStorage.removeItem("authToken");
                     setIsMenuOpen(false);
+                    navigate("/");
                   }}
+                  className="hover:text-red-600"
                 >
                   Logout
-                </Link>
+                </button>
               </>
             ) : (
               <>
-                <Link to="/login" onClick={() => setIsMenuOpen(false)}>Login</Link>
-                <Link to="/signup" onClick={() => setIsMenuOpen(false)}>Signup</Link>
+                <NavLink
+                  to="/login"
+                  onClick={() => setIsMenuOpen(false)}
+                  className={({ isActive }) => (isActive ? "font-bold text-teal-700" : "")}
+                >
+                  Login
+                </NavLink>
+                <NavLink
+                  to="/signup"
+                  onClick={() => setIsMenuOpen(false)}
+                  className={({ isActive }) => (isActive ? "font-bold text-teal-700" : "")}
+                >
+                  Signup
+                </NavLink>
               </>
             )}
           </div>
