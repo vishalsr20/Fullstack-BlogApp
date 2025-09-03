@@ -157,7 +157,10 @@ const GetAllBlogs = () => {
                         />
                         <h3 className="text-sm font-bold text-gray-900">@{blog.username}</h3>
                       </div>
-                      <h4 className="text-lg font-semibold text-gray-600 mb-3">{blog.title}</h4>
+                      <h4 className="text-lg font-semibold text-gray-600 mb-3">
+                        {blog.title.split(" ").slice(0, 10).join(" ")}
+                        {blog.title.split(" ").length > 10 ? "..." : ""}
+                      </h4>
                       <p className="text-gray-600 text-base mb-4 line-clamp-3">{blog.content}</p>
                     </div>
 
@@ -169,24 +172,24 @@ const GetAllBlogs = () => {
                           aria-label={hasUserLiked(blog) ? "Unlike" : "Like"}
                         >
                           {hasUserLiked(blog) ? (
-                            <FaHeart className="text-red-500 mr-2 text-2xl" />
+                            <FaHeart className="text-red-500  lg:text-2xl" />
                           ) : (
-                            <CiHeart className="text-gray-400 mr-2 hover:text-red-500 text-2xl" />
+                            <CiHeart className="text-gray-400  hover:text-red-500 text-2xl" />
                           )}
                         </button>
-                        <span className="text-lg font-medium">{blog.likes?.length || 0}</span>
+                        <span className="text-sm  lg:text-lg font-bold">{blog.likes?.length || 0}</span>
                       </div>
 
                       <div>
                         <button
-                          className="font-bold text-gray-600 whitespace-nowrap  font-serif "
+                          className="text-sm lg:text-lg  font-bold text-gray-600 whitespace-nowrap  font-serif "
                           onClick={(e) => commentsHandler(e, blog._id)}
                         >
                           💬 Comment
                         </button>
                       </div>
 
-                      <p className="text-base text-gray-500">
+                      <p className="text-xs  lg:text-lg text-gray-500">
                         {new Date(blog.createdAt).toLocaleDateString('en-US', {
                           year: 'numeric',
                           month: 'long',
