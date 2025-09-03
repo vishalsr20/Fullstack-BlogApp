@@ -13,10 +13,13 @@ export const UpdatePassword = () => {
   const handleSubmit = async (e) => {
     
     e.preventDefault();
-    const email = localStorage.getItem("authEmail")
+    const email = localStorage.getItem("resetEmail")
     const userId = localStorage.getItem("authUserId")
     console.log("email",email);
     console.log("userId",userId)
+    if(password.length < 6){
+      toast.message("Password must contain 6 char")
+    }
     if (password !== confirmPassword) {
       setError("Passwords do not match");
       setSuccess('');
@@ -27,7 +30,7 @@ export const UpdatePassword = () => {
         const { data } = await axios.put(updatepasswordRoute(userId), { password });
         if (data.success === true) {
           toast.success("Password updated successfully");
-          localStorage.removeItem("authEmail");
+          localStorage.removeItem("resetEmail");
           
           navigate("/login");
         } else {
