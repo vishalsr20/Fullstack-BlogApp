@@ -15,21 +15,27 @@ const SearchResult = () => {
   const [userId, setUserId] = useState(null);
 
   const navigate = useNavigate();
+  
 
-  useEffect(() => {
-    const tokenSession = localStorage.getItem("authToken");
-    if (tokenSession) {
-      setToken(tokenSession);
-      try {
-        const decodeToken = JSON.parse(atob(tokenSession.split('.')[1]));
-        setUserId(decodeToken.div);
-      } catch (error) {
-        console.log("Token error:", error.message);
-        toast.error("Session expired. Please login.");
-        navigate("/login");
-      }
+useEffect(() => {
+  const tokenSession = localStorage.getItem("authToken");
+  const userIdLocal = localStorage.getItem("authUserId");
+
+  if (tokenSession) {
+    setToken(tokenSession);
+
+    try {
+      const decodeToken = JSON.parse(atob(tokenSession.split('.')[1]));
+      setUserId(decodeToken.id || userIdLocal); // make sure correct key from token
+      console.log("UserId for user:", decodeToken.id || userIdLocal);
+    } catch (error) {
+      console.log("Token error:", error.message);
+      toast.error("Session expired. Please login.");
+      navigate("/login");
     }
-  }, []);
+  }
+}, []);
+
 
   useEffect(() => {
     if (category) {
@@ -40,6 +46,7 @@ const SearchResult = () => {
   const fetchData = async (category) => {
     try {
       const res = await axios.get(getContentType(category));
+      console.log("UserID in searchRes ",res.data)
       setBlogType(res.data.blog || []);
     } catch (error) {
       console.error("Error fetching filtered blogs:", error);
@@ -99,8 +106,8 @@ const SearchResult = () => {
     navigate(`/blog/${blog._id}`, { state: { blog } });
   };
 
-  const hasUserLiked = (blog) => {
-    return userId && blog.likes.includes(userId);
+   const hasUserLiked = (blog) => {
+    return userId && blog.likes?.includes(userId);
   };
 
   return (
@@ -132,12 +139,14 @@ const SearchResult = () => {
                         @{blog.username}
                       </h3>
                     </div>
-                    <h4
-                      className="text-2xl font-semibold text-gray-800 mb-3 cursor-pointer"
-                      onClick={() => goToBlog(blog)}
-                    >
-                      {blog.title}
-                    </h4>
+                   <h4
+                    className="text-xl font-semibold font-sans text-gray-700 mb-3 cursor-pointer"
+                    onClick={() => goToBlog(blog)}
+                  >
+                    {blog.title.split(" ").length > 10
+                      ? blog.title.split(" ").slice(0, 10).join(" ") + "..."
+                      : blog.title}
+                  </h4>
                     <p
                       className="text-gray-600 text-base mb-4 line-clamp-3 cursor-pointer"
                       onClick={() => goToBlog(blog)}
@@ -150,13 +159,14 @@ const SearchResult = () => {
                     <div className="flex items-center gap-3">
                       <button
                         onClick={(e) => toggleLike(e, blog._id)}
-                        className="focus:outline-none hover:scale-110 transition-transform"
-                        aria-label={hasUserLiked(blog) ? "Unlike" : "Like"}
+                        className="focus:outline-none hover:scale-110 transition-transform duration-200 p-1 rounded-full hover:bg-red-50"
+                        aria-label={hasUserLiked(blog) ? "Unlike this blog" : "Like this blog"}
+                        disabled={!token}
                       >
                         {hasUserLiked(blog) ? (
-                          <FaHeart className="text-red-500 text-2xl" />
+                          <FaHeart className="text-red-500 text-2xl " />
                         ) : (
-                          <CiHeart className="text-gray-400 hover:text-red-500 text-2xl" />
+                          <CiHeart className=" hover:text-red-500 text-2xl transition-colors" />
                         )}
                       </button>
                       <span className="text-lg font-medium">{blog.likes?.length || 0}</span>
