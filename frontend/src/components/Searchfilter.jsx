@@ -139,6 +139,9 @@ const Searchfilter = ({ isLoggedIn, setIsLoggedIn }) => {
                 >
                   Profile
                 </NavLink>
+                <Link to={"/generate-blog-ai"}>
+                Generate Blog
+                </Link>
                 <button
                   onClick={() => {
                     setIsLoggedIn(false);
@@ -178,3 +181,4 @@ const Searchfilter = ({ isLoggedIn, setIsLoggedIn }) => {
 };
 
 export default Searchfilter;
+ 
