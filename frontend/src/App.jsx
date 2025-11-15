@@ -15,6 +15,7 @@ import OtpForgotPassword from "./components/pages/OtpForgotPassword"
 import { UpdatePassword } from "./components/pages/UpdatePassword"
 import { useEffect, useState } from "react"
 import FortgotPassword from "./components/pages/FortgetPassword"
+import  BlogGenerator  from "./components/pages/BlogGenerator"
 
 function App() {
     const [isLoggedIn , setIsLoggedIn] = useState(false)
@@ -48,6 +49,7 @@ function App() {
       <Route path="/forgotpassword" element={<FortgotPassword/>} />
       <Route path="verifyotpforgotpassword" element={<OtpForgotPassword/>} />
       <Route path="/updatepassword" element={<UpdatePassword/>}/>
+      <Route path="/generate-blog-ai" element={<BlogGenerator/>} />
 
     </Routes>
     </>
