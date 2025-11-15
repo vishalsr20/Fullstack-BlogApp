@@ -7,7 +7,7 @@ const userController = require('../controllers/auth')
 const {auth} = require("../middleware.js/Auth")
 const multer = require('multer'); 
 const filter = require("../controllers/SearchFilter")
-
+const blogGeneratorController = require("../controllers/blogGenerator")
 
 
   const storage = multer.memoryStorage();
@@ -36,4 +36,5 @@ router.put("/updatepassword/:userId",userController.updatePassword)
 router.post("/verifyotpPassword",userController.verifyOtpForPassword)
 router.get("/getcomments/:blogId", commentController.getComments);
 router.post("/comments/:blogId", auth, commentController.postComments);
+router.post('/generate-blog-ai', upload.single('image'), auth, blogGeneratorController.generateBlog);
 module.exports = router
