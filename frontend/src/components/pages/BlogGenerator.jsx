@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom';
 import { Sparkles, Wand2, TrendingUp, BookOpen, Upload, Type, MessageSquare } from 'lucide-react';
+import { generateBlog } from '../../../APIRoutes';
 
 const BlogGenerator = () => {
   const navigate = useNavigate();
@@ -98,10 +99,10 @@ const handleSubmit = async (e) => {
     console.log("FormData to be sent:");
     for (const pair of fd.entries()) console.log(pair[0], ':', pair[1]);
 
-    const url = "http://localhost:3000/api/v1/generate-blog-ai";
+    
 
     // IMPORTANT: don't set Content-Type header for FormData
-    const res = await axios.post(url, fd, {
+    const res = await axios.post(generateBlog, fd, {
       headers: { Authorization: `Bearer ${token}` },
       // optional: timeout: 60_000
     });
