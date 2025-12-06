@@ -18,7 +18,7 @@ const BlogCard = ({ blog, toggleLike, hasUserLiked, onClickCard }) => {
               />
               <h3 className="text-lg font-bold text-gray-700">@{blog.username}</h3>
             </div>
-            <h4 className="text-2xl font-semibold text-gray-800 mb-3">{blog.title}</h4>
+            <h4 className="text-sm  font-semibold text-gray-800 mb-3">{blog.title}</h4>
             <p className="text-gray-600 text-base mb-4 line-clamp-3">{blog.content}</p>
           </div>
   

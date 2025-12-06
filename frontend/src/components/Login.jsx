@@ -6,7 +6,7 @@ import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import { LoginRoutes } from "../../APIRoutes";
 
-const Login = () => {
+const Login = ({ setIsLoggedIn }) => { // ← Add this prop
   const navigate = useNavigate();
 
   const [values, setValues] = useState({
@@ -29,16 +29,14 @@ const Login = () => {
           toast.error(data.message || "Invalid credentials");
         } else {
           localStorage.setItem("authToken", data.token);
-
-          // Usually, you should not manually set HttpOnly cookies from the frontend
-          // document.cookie line is not needed unless you're doing something specific
-          // If needed, backend should handle `Set-Cookie` header with HttpOnly
-
+          
+          // ← ADD THESE LINES
+          setIsLoggedIn(true); // Update parent state
+          
+          toast.success("Login successful!");
           navigate("/profile");
         }
       } catch (error) {
-        // console.error("Login Error:", error);
-
         if (error.response) {
           toast.error(error.response.data.message || "Login failed");
         } else {
@@ -50,8 +48,7 @@ const Login = () => {
 
   const Validation = () => {
     const { email, password } = values;
-    const emailRegex =
-      /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
     if (!emailRegex.test(email)) {
       toast.error("Please provide a valid email");
@@ -71,7 +68,7 @@ const Login = () => {
   };
 
   return (
-    <div className="flex mt-20 flex-col shadow-md shadow-teal-200 mx-auto lg:flex-row justify-center items-center max-w-4xl  border rounded-lg overflow-hidden">
+    <div className="flex mt-20 flex-col shadow-md shadow-teal-200 mx-auto lg:flex-row justify-center items-center max-w-4xl border rounded-lg overflow-hidden">
       {/* Left Image Section */}
       <div className="hidden lg:block lg:w-1/2">
         <img

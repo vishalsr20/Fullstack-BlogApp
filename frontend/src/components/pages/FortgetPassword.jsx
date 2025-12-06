@@ -20,8 +20,8 @@ import 'react-toastify/dist/ReactToastify.css';
         console.log("API response:", data);
         toast.success("OTP SENT. Check your email.");
         localStorage.setItem("authUserId", data.user._id);
-        
-console.log("Saved userId:", localStorage.getItem("authUserId")); 
+        localStorage.setItem("resetEmail", email); 
+      console.log("Saved userId:", localStorage.getItem("authUserId")); 
         navigate("/verifyotpforgotpassword");
       } else {
         toast.error(data.message || "User not registered.");

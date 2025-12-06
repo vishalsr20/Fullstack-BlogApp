@@ -62,9 +62,10 @@ const Signup = () => {
   }
 
   return (
-    <div className="flex flex-col lg:flex-row max-w-4xl mx-auto my-10 border rounded-lg shadow-lg overflow-hidden">
+   <div className=" ">
+     <div className="flex flex-col mt-24   lg:flex-row max-w-4xl mx-auto  border rounded-lg shadow-lg overflow-hidden">
       {/* Left Image Section */}
-      <div className="hidden lg:block lg:w-1/2">
+      <div className="hidden lg:block lg:w-1/2  ">
         <img
           src={Sign}
           alt="Signup Illustration"
@@ -73,7 +74,7 @@ const Signup = () => {
       </div>
 
       {/* Form Section */}
-      <div className="w-full lg:w-1/2 bg-gray-100 p-8 flex flex-col justify-center items-center">
+      <div className="w-full lg:w-1/2 bg-gray-100 p-8 mt-16 flex flex-col justify-center items-center">
         {/* Header */}
         <div className="flex items-center mb-6">
           <img
@@ -150,6 +151,7 @@ const Signup = () => {
       </div>
       <ToastContainer/>
     </div>
+   </div>
   );
 };
 
