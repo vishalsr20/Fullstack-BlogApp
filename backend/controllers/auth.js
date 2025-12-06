@@ -449,12 +449,7 @@ exports.updateBlog = async (req , res) => {
             blog
         });
 
-        if(!password){
-            return res.status(403).json({
-                message:"All fields are required , while updating blog",
-                success:false
-            })
-        }
+       
 
     }catch(error){
         console.log("Error while updating blog",error)
@@ -471,11 +466,6 @@ exports.updatePassword = async (req, res) => {
         const{password} = req.body;
         const userId = req.params.userId
 
-
-
-
-
-        
         if (password.length < 6) {
             return res.status(400).json({
                 message: "Password must be at least 6 characters long",
@@ -617,40 +607,112 @@ exports.likeBlog = async (req, res) => {
     }
   };
 
-  exports.getAllBlogs = async (req, res) => {
-    try {
-      const getBlogs = await Blog.find({});
-      if (!getBlogs) {
-        return res.status(404).json({
-          message: "No blogs are found",
-          success: false,
-        });
-      }
+//   exports.getAllBlogs = async (req, res) => {
+//     try {
+//       const getBlogs = await Blog.find({});
+//       if (!getBlogs) {
+//         return res.status(404).json({
+//           message: "No blogs are found",
+//           success: false,
+//         });
+//       }
   
-      // Get the logged-in user's ID from the request (assuming middleware attaches the user)
-      const userId = req.user ? req.user.id : null; // Only get userId if logged in
+//       // Get the logged-in user's ID from the request (assuming middleware attaches the user)
+//       const userId = req.user ? req.user.id : null; // Only get userId if logged in
   
-      // Map through blogs and add `isLiked` field
-      const updatedBlogs = getBlogs.map((blog) => {
-        const isLiked = userId ? blog.likes.some((like) => like.toString() === userId) : false; // Only check if logged in
-        return { ...blog.toObject(), isLiked }; // Add `isLiked` field to the blog object
-      });
-  
-      return res.status(200).json({
-        message: "All blogs are fetched",
-        success: true,
-        getBlogs: updatedBlogs,
-      });
-    } catch (error) {
-      console.log("Error in get all blogs", error);
-      return res.status(500).json({
-        message: "Issue in get all blogs",
+//       // Map through blogs and add `isLiked` field
+//       const updatedBlogs = getBlogs.map((blog) => {
+//         const isLiked = userId ? blog.likes.some((like) => like.toString() === userId) : false; // Only check if logged in
+//         return { ...blog.toObject(), isLiked }; // Add `isLiked` field to the blog object
+//       });
+//       console.log("All Blogs : ", updatedBlogs)
+//       return res.status(200).json({
+//         message: "All blogs are fetched",
+//         success: true,
+//         getBlogs: updatedBlogs,
+//       });
+//     } catch (error) {
+//       console.log("Error in get all blogs", error);
+//       return res.status(500).json({
+//         message: "Issue in get all blogs",
+//         success: false,
+//       });
+//     }
+//   };
+
+
+exports.getAllBlogs = async (req, res) => {
+  try {
+    // Get pagination parameters from query string
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 7;
+    
+    // Calculate skip value for pagination
+    const skip = (page - 1) * limit;
+    
+    // Get the logged-in user's ID from the request (if authenticated)
+    const userId = req.user ? req.user.id : null;
+    
+    // Get total count of blogs
+    const totalBlogs = await Blog.countDocuments();
+    
+    // Fetch blogs with pagination and sort by newest first
+    const getBlogs = await Blog.find({})
+      .sort({ createdAt: -1 }) // Sort by newest first (-1 for descending order)
+      .skip(skip)
+      .limit(limit)
+      .populate('author', 'username avatar') // Optional: populate author details if needed
+      .lean(); // Convert to plain JavaScript objects for better performance
+    
+    if (!getBlogs || getBlogs.length === 0) {
+      return res.status(404).json({
+        message: page === 1 ? "No blogs are found" : "No more blogs available",
         success: false,
+        getBlogs: [],
+        currentPage: page,
+        totalPages: 0,
+        totalBlogs: 0,
+        hasMore: false
       });
     }
-  };
-
-
+    
+    // Map through blogs and add `isLiked` field
+    const updatedBlogs = getBlogs.map((blog) => {
+      const isLiked = userId 
+        ? blog.likes.some((like) => like.toString() === userId) 
+        : false;
+      return { ...blog, isLiked };
+    });
+    
+    // Calculate if there are more blogs to load
+    const hasMore = skip + getBlogs.length < totalBlogs;
+    const totalPages = Math.ceil(totalBlogs / limit);
+    
+    console.log(`Page ${page}: Returning ${updatedBlogs.length} blogs (Total: ${totalBlogs})`);
+    
+    return res.status(200).json({
+      message: "Blogs fetched successfully",
+      success: true,
+      getBlogs: updatedBlogs,
+      pagination: {
+        currentPage: page,
+        totalPages: totalPages,
+        totalBlogs: totalBlogs,
+        hasMore: hasMore,
+        blogsPerPage: limit,
+        blogsInCurrentPage: updatedBlogs.length
+      }
+    });
+    
+  } catch (error) {
+    console.error("Error in get all blogs:", error);
+    return res.status(500).json({
+      message: "Issue in fetching blogs",
+      success: false,
+      error: error.message
+    });
+  }
+};
 
 
 

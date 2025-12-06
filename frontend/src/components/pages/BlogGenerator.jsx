@@ -128,7 +128,7 @@ const handleSubmit = async (e) => {
       });
       if (data.blog.image) setImagePreview(data.blog.image);
       // optionally clear form or keep it
-      // navigate('/') // uncomment if you want immediate redirect
+      navigate('/') 
       setIsGenerating(false);
       return;
     }

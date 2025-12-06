@@ -68,8 +68,18 @@ const Profile = () => {
     );
   }
 
-  function EditBlogHandler(blogId) {
-    navigate(`/updateBlog/${blogId}`);
+  function EditBlogHandler(blog) {
+    navigate(`/updateBlog/${blog._id}`,{
+     state: {
+      blogData: {
+        title: blog.title,
+        content: blog.content,
+        image: blog.image,
+        _id: blog._id
+      }
+    }
+
+    });
   }
 
   const DeleteHandler = async (blogId) => {
@@ -322,7 +332,7 @@ const Profile = () => {
 
                             <div className="flex gap-3">
                               <button
-                                onClick={() => EditBlogHandler(blog._id)}
+                                onClick={() => EditBlogHandler(blog)}
                                 className="flex items-center gap-2 bg-gradient-to-r from-green-500 to-green-600 text-white py-2 px-4 rounded-lg hover:shadow-lg transform hover:scale-105 transition-all duration-300"
                               >
                                 <Edit2 className="w-4 h-4" />
