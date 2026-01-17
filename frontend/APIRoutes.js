@@ -1,4 +1,4 @@
-//  const host = 'https://techthinkers.onrender.com'
+  //const host = 'https://techthinkers.onrender.com'
  const host ='http://localhost:3000'
 
 export const LoginRoutes = `${host}/api/v1/login`
