@@ -1,36 +1,64 @@
 const nodemailer = require("nodemailer");
-require("dotenv").config();  // To load environment variables
 
-const sendEmail = async ({email, username, otp}) => {
+const sendEmail = async ({ email, username, otp }) => {
   try {
-    // Check if email is valid
-    console.log("This is udername",username)
-
-    console.log("Sending email to:", email);
-
-    // Create the transporter object with SMTP configuration
-    let transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",      // For Gmail SMTP
-                      // Use TLS (not SSL)
+    
+    const transporter = nodemailer.createTransport({
+      host: "smtp.gmail.com",
+      port: 587,
+      secure: false, 
       auth: {
-        user: process.env.MAIL_USER,    // Your email address
-        pass: process.env.MAIL_PASS,    // Your app-specific password
+        user: process.env.MAIL_USER,
+        pass: process.env.MAIL_PASS, 
       },
     });
 
-    // Define the email options
-    let info = await transporter.sendMail({
-      from: "Tech Thinkers !!",      // Sender email address
-      to: email,                        // Recipient email address
-      subject: `Welcome, ${username}!`,   // Email subject
-      html: `<p>Your OTP is: <b>${otp}</b></p>`, // Email content (HTML)
-    });
+    
+    await transporter.verify();
 
-    console.log("Email sent successfully:", info.response);
+    
+    const mailOptions = {
+      from: `"Tech Thinkers" <${process.env.MAIL_USER}>`,
+      to: email,
+      subject: "Verify your email address",
+      html: `
+        <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+          <h2 style="color: #0f766e;">Welcome to Tech Thinkers, ${username} 👋</h2>
+          <p>Thank you for signing up! Please use the OTP below to verify your email address:</p>
+
+          <div style="
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f3f4f6;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 24px;
+            letter-spacing: 4px;
+            font-weight: bold;
+          ">
+            ${otp}
+          </div>
+
+          <p>This OTP is valid for <strong>10 minutes</strong>.</p>
+
+          <p>If you did not create an account, you can safely ignore this email.</p>
+
+          <hr style="margin: 24px 0;" />
+
+          <p style="font-size: 12px; color: #6b7280;">
+            © ${new Date().getFullYear()} Tech Thinkers. All rights reserved.
+          </p>
+        </div>
+      `,
+    };
+
+    
+    const info = await transporter.sendMail(mailOptions);
     return info;
+
   } catch (error) {
-    console.error("Error in sending email:", error.message);
-    throw error; // Rethrow the error to be handled by the caller
+    console.error("Failed to send verification email:", error);
+    throw error;
   }
 };
 
