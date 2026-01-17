@@ -9,6 +9,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import { SignUpRoutes } from "../../APIRoutes";
 const Signup = () => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+
 
   const [values, setValues] = useState({
     username: "",
@@ -17,26 +19,57 @@ const Signup = () => {
     confirmpassword: "",
   });
 
-  const SubmitHandler = async (e) =>  {
-    e.preventDefault();
-    if(Validation()){
-      // console.log(values)
-      const {username , email, password} = values
-      const {data} = await axios.post(SignUpRoutes,
-       { username,email,password}
-      )
+  // const SubmitHandler = async (e) =>  {
+  //   e.preventDefault();
+  //   if(Validation()){
+  //     // console.log(values)
+  //     const {username , email, password} = values
+  //     const {data} = await axios.post(SignUpRoutes,
+  //      { username,email,password}
+  //     )
 
-      if(data.success == false){
-        toast.error(data.message);
-      }else{
-        toast.success("Please verify OTP sent on your email")
-        localStorage.setItem("userId",data.userId)
-        navigate('/verifyOtp')
-      }
-    }
+  //     if(data.success == false){
+  //       toast.error(data.message);
+  //     }else{
+  //       toast.success("Please verify OTP sent on your email")
+  //       localStorage.setItem("userId",data.userId)
+  //       navigate('/verifyOtp')
+  //     }
+  //   }
     
 
+  // }
+  const SubmitHandler = async (e) => {
+  e.preventDefault();
+
+  if (!Validation()) return;
+
+  try {
+    setLoading(true);
+
+    const { username, email, password } = values;
+    const { data } = await axios.post(SignUpRoutes, {
+      username,
+      email,
+      password,
+    });
+
+    if (!data.success) {
+      toast.error(data.message);
+    } else {
+      toast.success("Please verify OTP sent to your email");
+      localStorage.setItem("userId", data.userId);
+      navigate("/verifyOtp");
+    }
+  } catch (error) {
+    toast.error(
+      error?.response?.data?.message || "Something went wrong. Please try again."
+    );
+  } finally {
+    setLoading(false);
   }
+};
+
 
   function Validation(){
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -132,10 +165,40 @@ const Signup = () => {
           {/* Submit Button */}
           <button
             type="submit"
-            className="w-full bg-amber-400 text-white py-3 rounded-lg font-semibold hover:bg-amber-500 transition-all duration-200"
+            disabled={loading}
+            className={`w-full py-3 rounded-lg font-semibold transition-all duration-200
+              ${loading ? "bg-gray-400 cursor-not-allowed" : "bg-amber-400 hover:bg-amber-500 text-white"}
+            `}
           >
-            Sign Up
+            {loading ? (
+              <div className="flex items-center justify-center gap-2">
+                <svg
+                  className="animate-spin h-5 w-5 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  />
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8v8z"
+                  />
+                </svg>
+                Please wait...
+              </div>
+            ) : (
+              "Sign Up"
+            )}
           </button>
+
         </form>
 
         {/* Redirect to Login */}
