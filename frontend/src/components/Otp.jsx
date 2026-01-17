@@ -1,18 +1,23 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import { VerifyOtpRoute } from "../../APIRoutes";
 
-
 const Otp = () => {
   const navigate = useNavigate();
   const [otp, setOtp] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleOtpChange = (e) => {
-    setOtp(e.target.value);
-  };
+  // 🔒 Protect OTP page
+  useEffect(() => {
+    const userId = localStorage.getItem("userId");
+    if (!userId) {
+      toast.error("Session expired. Please signup again.");
+      navigate("/signup");
+    }
+  }, [navigate]);
 
   const handleVerifyOtp = async (e) => {
     e.preventDefault();
@@ -22,18 +27,35 @@ const Otp = () => {
       return;
     }
 
-   
-        const userId = localStorage.getItem("userId")
-        // console.log("UserId ", userId)
-      const { data } = await axios.post(VerifyOtpRoute, { userId , otp });
-        // console.log("Otp ",otp)
-      if (data.success) {
-        toast.success("OTP verified successfully!");
-        navigate("/"); // Redirect to a desired page after successful verification
-      } else {
-        toast.error(data.message || "Invalid OTP. Please try again.");
-      }
+    const userId = localStorage.getItem("userId");
+    if (!userId) {
+      toast.error("User not found. Please signup again.");
+      navigate("/signup");
+      return;
+    }
 
+    try {
+      setLoading(true);
+
+      const { data } = await axios.post(VerifyOtpRoute, {
+        userId,
+        otp,
+      });
+
+      if (data.success) {
+        toast.success("Email verified successfully!");
+        localStorage.removeItem("userId");
+        navigate("/login");
+      } else {
+        toast.error(data.message || "Invalid OTP");
+      }
+    } catch (error) {
+      toast.error(
+        error?.response?.data?.message || "Invalid or expired OTP"
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -42,29 +64,32 @@ const Otp = () => {
         <h2 className="text-2xl font-bold text-gray-800 mb-4 text-center">
           Verify OTP
         </h2>
+
         <form onSubmit={handleVerifyOtp} className="space-y-4">
-          {/* OTP Input */}
           <input
             type="text"
             placeholder="Enter OTP"
             value={otp}
-            onChange={handleOtpChange}
+            onChange={(e) => setOtp(e.target.value)}
             maxLength={6}
             className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-teal-200"
           />
-          {/* Verify Button */}
+
           <button
             type="submit"
-            className="w-full bg-teal-500 text-white py-3 rounded-lg font-semibold hover:bg-teal-600 transition duration-200"
+            disabled={loading}
+            className={`w-full py-3 rounded-lg font-semibold transition duration-200
+              ${loading ? "bg-gray-400 cursor-not-allowed" : "bg-teal-500 hover:bg-teal-600 text-white"}
+            `}
           >
-            Verify OTP
+            {loading ? "Verifying..." : "Verify OTP"}
           </button>
         </form>
-        {/* Resend OTP */}
+
         <p className="mt-4 text-center text-gray-600">
           Didn’t receive the OTP?{" "}
           <button
-            onClick={() => toast.info("Resend OTP feature is under development.")}
+            onClick={() => toast.info("Resend OTP coming soon")}
             className="text-teal-500 font-semibold hover:underline"
           >
             Resend OTP
