@@ -26,6 +26,6 @@
     "multer": "^1.4.5-lts.1",
     "nodemailer": "^6.9.16",
     "openai": "^6.8.1",
-    "resend": "^4.0.1"
+    "resend": "^4.8.0"
   }
 }
