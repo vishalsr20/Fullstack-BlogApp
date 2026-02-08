@@ -16,7 +16,7 @@ app.use(cookieParser())
 app.use(cors())
 
 app.use(cors({
-  origin: "https://techthinkersblog.onrender.com/",
+  origin: "https://techthinkersblog.onrender.com",
   credentials: true,
 }));
 
