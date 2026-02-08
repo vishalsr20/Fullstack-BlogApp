@@ -16,7 +16,7 @@ app.use(cookieParser())
 app.use(cors())
 
 app.use(cors({
-  origin: "http://localhost:5173",
+  origin: "https://techthinkersblog.onrender.com/",
   credentials: true,
 }));
 
