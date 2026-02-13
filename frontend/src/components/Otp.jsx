@@ -88,6 +88,9 @@ const Otp = () => {
 
         <p className="mt-4 text-center text-gray-600">
           Didn’t receive the OTP?{" "}
+          Please check your <span className="font-semibold">Spam / Junk</span> folder.
+        <br />
+
           <button
             onClick={() => toast.info("Resend OTP coming soon")}
             className="text-teal-500 font-semibold hover:underline"
