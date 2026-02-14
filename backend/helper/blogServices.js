@@ -3,9 +3,7 @@ const Blog = require("../models/blogSchema")
 async function getBlogList(){
     try{
         return await Blog.find({})
-        .select("title category username like createdAt")
-        .sort({createdAt:-1})
-        .limit(20)
+        .sort({ createdAt: -1 }) // newest first
         .lean();
     }catch(error){
         console.error("GetBlogList Error: ",error)

@@ -1,141 +1,4 @@
-// import { useState, useRef, useEffect } from "react";
-// import { useLocation } from "react-router-dom";
-// import axios from "axios";
-// import { AiAgentRoutes } from "../../../APIRoutes";
 
-// const AiAgent = () => {
-//   const [open, setOpen] = useState(false);
-//   const [input, setInput] = useState("");
-//   const [messages, setMessages] = useState([]);
-//   const [loading, setLoading] = useState(false);
-
-//   const location = useLocation();
-//   const chatEndRef = useRef(null);
-
-//   // Auto scroll to bottom when messages change
-//   useEffect(() => {
-//     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
-//   }, [messages]);
-
-//   // Detect page mode
-//   let mode = "HOME";
-//   let blog_id = null;
-
-//   if (location.pathname.startsWith("/blog/")) {
-//     mode = "BLOG";
-//     blog_id = location.pathname.split("/blog/")[1];
-//   }
-
-//   const handleSend = async () => {
-//     if (!input.trim()) return;
-
-//     const userMessage = input;
-
-//     // Add user message
-//     setMessages((prev) => [
-//       ...prev,
-//       { role: "user", content: userMessage },
-//     ]);
-
-//     setInput("");
-//     setLoading(true);
-
-//     try {
-//       const { data } = await axios.post(AiAgentRoutes, {
-//         mode,
-//         blog_id,
-//         question: userMessage,
-//       });
-
-//       // Add assistant response
-//       setMessages((prev) => [
-//         ...prev,
-//         { role: "assistant", content: data.answer },
-//       ]);
-//     } catch (error) {
-//       setMessages((prev) => [
-//         ...prev,
-//         {
-//           role: "assistant",
-//           content: "⚠️ Something went wrong. Please try again.",
-//         },
-//       ]);
-//     }
-
-//     setLoading(false);
-//   };
-
-//   return (
-//     <>
-//       {/* Chat Window */}
-//       {open && (
-//         <div className="fixed bottom-24 right-6 w-80 h-[450px] bg-white rounded-xl shadow-2xl flex flex-col z-50">
-
-//           {/* Header */}
-//           <div className="p-3 border-b font-semibold bg-blue-600 text-white rounded-t-xl flex justify-between items-center">
-//             <span>🤖 Blog AI Assistant</span>
-//             <button onClick={() => setOpen(false)}>✖</button>
-//           </div>
-
-//           {/* Messages */}
-//           <div className="flex-1 overflow-y-auto p-3 space-y-2 text-sm bg-gray-50">
-//             {messages.map((msg, index) => (
-//               <div
-//                 key={index}
-//                 className={`p-2 rounded-lg max-w-[75%] ${
-//                   msg.role === "user"
-//                     ? "bg-blue-500 text-white ml-auto"
-//                     : "bg-white shadow"
-//                 }`}
-//               >
-//                 {msg.content}
-//               </div>
-//             ))}
-
-//             {loading && (
-//               <div className="text-gray-400 text-sm">
-//                 🤖 Typing...
-//               </div>
-//             )}
-
-//             <div ref={chatEndRef}></div>
-//           </div>
-
-//           {/* Input Area */}
-//           <div className="p-2 border-t flex bg-white">
-//             <input
-//               type="text"
-//               value={input}
-//               onChange={(e) => setInput(e.target.value)}
-//               placeholder="Ask something..."
-//               className="flex-1 border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
-//               onKeyDown={(e) => e.key === "Enter" && handleSend()}
-//             />
-//             <button
-//               onClick={handleSend}
-//               disabled={loading}
-//               className="ml-2 bg-blue-600 text-white px-4 rounded-lg hover:bg-blue-700 transition"
-//             >
-//               Send
-//             </button>
-//           </div>
-//         </div>
-//       )}
-
-//       {/* Floating Button */}
-//       <div className="fixed bottom-6 right-6 z-50">
-//         <button
-//           onClick={() => setOpen(!open)}
-//           className="bg-blue-600 text-white text-3xl p-4 rounded-full shadow-lg hover:scale-110 transition duration-300"
-//         >
-//           🤖
-//         </button>
-//       </div>
-//     </>
-//   );
-// };
-
-// export default AiAgent;
 
 
 import { useState, useRef, useEffect } from "react";
@@ -378,7 +241,29 @@ const AiAgent = () => {
                       : "bg-white shadow-sm border border-gray-100 text-gray-800 message-assistant rounded-bl-sm"
                   }`}
                 >
-                  <p className="text-sm leading-relaxed">{msg.content}</p>
+               <p className="text-sm leading-relaxed whitespace-pre-wrap">
+                  {msg.content.split("\n").map((line, i) => {
+                    if (/^\d+\./.test(line)) {
+                      return (
+                        <div key={i} className="font-semibold text-indigo-600">
+                          {line}
+                        </div>
+                      );
+                    }
+
+                    if (line.startsWith("Title:")) {
+                      return (
+                        <div key={i}>
+                          <span className="font-semibold text-gray-900">Title:</span>
+                          {line.replace("Title:", "")}
+                        </div>
+                      );
+                    }
+
+                    return <div key={i}>{line}</div>;
+                  })}
+                </p>
+
                 </div>
               </div>
             ))}

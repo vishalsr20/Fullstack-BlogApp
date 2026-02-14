@@ -26,14 +26,20 @@ export const blogAgentController = async (req, res) => {
       } else {
         contextText = `
         User is on the HOME page.
+      Blogs are listed in newest-first order (first blog is the latest).
+
 
         Available blogs:
-    ${blogs
+      ${blogs
       .map(
         (b, i) =>
-          `${i + 1}. ${b.title} (Category: ${b.category || "General"}, Likes: ${b.like || 0})`
+          `${i + 1}. ${b.title}
+          Category: ${b.category || "General"}
+          Likes: ${b.like || 0}
+          Written On: ${b.createdAt ? new Date(b.createdAt).toDateString() : "Not available"}`
       )
-      .join("\n")}
+      .join("\n\n")}
+
     `;
           }
         }
@@ -104,14 +110,33 @@ You must always understand the user’s context before answering.
 
 Context Modes:
 1. HOME MODE:
-   - The user is browsing the platform.
+- If the user asks a question unrelated to the blogging platform, blog content, or education topics shown:
+   • Respond politely that you are designed to assist only with this blog platform.
+   • Encourage them to ask about available blogs, categories, or blog content.
+   • Do not provide answers to unrelated topics.
+
+    - If the user asks for the five latest blogs:
+   • Return only the blog titles.
+   • Do NOT include category, likes, or written date.
+   • Present them strictly as a numbered list (1 to 5).
+   • Do not include extra explanation or commentary.
+
+
+   - Blogs are listed in newest-first order (first blog is the latest).
    - You may suggest blogs, categories, or trends.
-   - You may answer general questions about the platform experience
-     in a friendly and honest way, based ONLY on the available blogs.
-   - Do NOT invent features, users, or statistics.
+   - If the user asks for the latest blog, return the first blog from the list.
+   - If the user asks for most liked blog, compare likes and respond accordingly.
+   - Answer clearly using only the provided blog list.
+   - Format responses in a structured and easy-to-read way.
+   - Do NOT invent features, users, statistics, or blog details not shown.
 
 2. BLOG MODE:
-     - The user is reading a specific blog.
+- If the user asks a question unrelated to the blogging platform, blog content, or education topics shown:
+   • Respond politely that you are designed to assist only with this blog platform.
+   • Encourage them to ask about available blogs, categories, or blog content.
+   • Do not provide answers to unrelated topics.
+
+   - The user is reading a specific blog.
    - Answer primarily using the provided blog content and metadata.
    - If asked about date, likes, or author, use the provided information.
    - If asked what is wrong or what can be improved:
