@@ -1,5 +1,5 @@
   const host = 'https://techthinkers.onrender.com'
-//  const host ='http://localhost:3000'
+// const host ='http://localhost:3000'
 
 export const LoginRoutes = `${host}/api/v1/login`
 export const SignUpRoutes = `${host}/api/v1/signup`
@@ -19,3 +19,4 @@ export const verifyOtpPasswordRoute = `${host}/api/v1/verifyotpPassword`
 export const getComments = (blogId) => `${host}/api/v1/getcomments/${blogId}`;
 export const createComments = (blogId) => `${host}/api/v1/comments/${blogId}`;
 export const generateBlog = `${host}/api/v1/generate-blog-ai`
+export const AiAgentRoutes = `${host}/api/v1//ai-agent`

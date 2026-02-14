@@ -14,6 +14,7 @@ import { UpdatePassword } from "./components/pages/UpdatePassword"
 import { useEffect, useState } from "react"
 import FortgotPassword from "./components/pages/FortgetPassword"
 import BlogGenerator from "./components/pages/BlogGenerator"
+import AiAgent from "./components/pages/AiAgent"
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
@@ -28,6 +29,7 @@ function App() {
   return (
     <>
       <Searchfilter isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn}/>
+      <AiAgent/>
       <Routes>
         <Route path="/" element={<GetAllBlogs/>} />
         <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />}/>

@@ -14,15 +14,25 @@ async function getBlogList(){
 }
 
 
+// async function getBlogById(blogId) {
+//     try{
+//         return await Blog.findById(blogId)
+//             .select("title content category username")
+//             .lean()
+//     }catch(error){
+//         console.log("GetBlogById error: ",error)
+//         return null
+//     }
+// }
+
+
 async function getBlogById(blogId) {
-    try{
-        return await Blog.findById(blogId)
-            .select("title content category username")
-            .lean()
-    }catch(error){
-        console.log("GetBlogById error: ",error)
-        return null
-    }
+  try {
+    return await Blog.findById(blogId).lean();
+  } catch (error) {
+    console.log("GetBlogById error: ", error);
+    return null;
+  }
 }
 
 module.exports = {

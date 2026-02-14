@@ -18,7 +18,7 @@ const cloudinary = require("cloudinary").v2
 exports.signup = async (req, res) => {
     try {
         const { username, email, password } = req.body;
-        console.log("Username =>" , username + "email => " , email + "Password => ",password)
+        // console.log("Username =>" , username + "email => " , email + "Password => ",password)
         
         let user = await User.findOne({ email });
         const existingUsername = await User.findOne({ username });
@@ -31,7 +31,7 @@ exports.signup = async (req, res) => {
                 });
             } else {
                 const createOtp = Math.floor(100000 + Math.random() * 900000);
-                const otpExpiresAt = Date.now() + 10 * 60 * 1000; // 10 minutes expiry
+                const otpExpiresAt = Date.now() + 10 * 60 * 1000; 
 
                 user.emailOtp = createOtp;
                 user.otpExpiresAt = new Date(otpExpiresAt);
