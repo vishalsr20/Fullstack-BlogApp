@@ -640,76 +640,37 @@ exports.likeBlog = async (req, res) => {
 //     }
 //   };
 
-
 exports.getAllBlogs = async (req, res) => {
   try {
-    // Get pagination parameters from query string
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 7;
-    
-    // Calculate skip value for pagination
-    const skip = (page - 1) * limit;
-    
-    // Get the logged-in user's ID from the request (if authenticated)
-    const userId = req.user ? req.user.id : null;
-    
-    // Get total count of blogs
-    const totalBlogs = await Blog.countDocuments();
-    
-    // Fetch blogs with pagination and sort by newest first
-    const getBlogs = await Blog.find({})
-      .sort({ createdAt: -1 }) // Sort by newest first (-1 for descending order)
-      .skip(skip)
-      .limit(limit)
-      .populate('author', 'username avatar') // Optional: populate author details if needed
-      .lean(); // Convert to plain JavaScript objects for better performance
+    const getBlogs = await Blog.find({}).lean(); // .lean() returns plain JS objects (faster, skips mongoose overhead)
     
     if (!getBlogs || getBlogs.length === 0) {
       return res.status(404).json({
-        message: page === 1 ? "No blogs are found" : "No more blogs available",
+        message: "No blogs are found",
         success: false,
-        getBlogs: [],
-        currentPage: page,
-        totalPages: 0,
-        totalBlogs: 0,
-        hasMore: false
       });
     }
-    
-    // Map through blogs and add `isLiked` field
+
+    const userId = req.user ? req.user.id : null;
+
+    // Convert likes to a Set per blog for O(1) lookup instead of O(n) with .some()
     const updatedBlogs = getBlogs.map((blog) => {
-      const isLiked = userId 
-        ? blog.likes.some((like) => like.toString() === userId) 
-        : false;
+      const likesSet = new Set(blog.likes.map((like) => like.toString()));
+      const isLiked = userId ? likesSet.has(userId) : false;
       return { ...blog, isLiked };
     });
-    
-    // Calculate if there are more blogs to load
-    const hasMore = skip + getBlogs.length < totalBlogs;
-    const totalPages = Math.ceil(totalBlogs / limit);
-    
-    console.log(`Page ${page}: Returning ${updatedBlogs.length} blogs (Total: ${totalBlogs})`);
-    
+
+    console.log("All Blogs : ", updatedBlogs);
     return res.status(200).json({
-      message: "Blogs fetched successfully",
+      message: "All blogs are fetched",
       success: true,
       getBlogs: updatedBlogs,
-      pagination: {
-        currentPage: page,
-        totalPages: totalPages,
-        totalBlogs: totalBlogs,
-        hasMore: hasMore,
-        blogsPerPage: limit,
-        blogsInCurrentPage: updatedBlogs.length
-      }
     });
-    
   } catch (error) {
-    console.error("Error in get all blogs:", error);
+    console.log("Error in get all blogs", error);
     return res.status(500).json({
-      message: "Issue in fetching blogs",
+      message: "Issue in get all blogs",
       success: false,
-      error: error.message
     });
   }
 };
